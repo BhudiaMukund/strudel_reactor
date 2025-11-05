@@ -49,16 +49,16 @@ export default function StrudelDemo() {
   const handleProc = () => {
     const processedCode = musicNotes.replaceAll("<p1_Radio>", ProcessText);
     if (globalEditor) {
-      globalEditor.setCode(musicNotes);
+      globalEditor.setCode(processedCode);
     }
-    setMusicNotes(processedCode);
+    setMusicNotes(processedCode)
   };
 
   const handleProcAndPlay = () => {
-    if (globalEditor != null && globalEditor.repl.state.started == true) {
+    if (globalEditor) {
       console.log(globalEditor);
       handleProc();
-      globalEditor.evaluate();
+      handlePlay();
     }
   };
 
