@@ -14,7 +14,6 @@ import { stranger_tune } from "./tunes";
 import console_monkey_patch, { getD3Data } from "./console-monkey-patch";
 
 // Components
-import DjControls from "./components/DjControls";
 import PlayButtons from "./components/PlayButtons";
 import ProcButtons from "./components/ProcButtons";
 import PreprocessText from "./components/PreprocessText";
@@ -142,7 +141,6 @@ export default function StrudelDemo() {
               <div id="output" />
             </div>
             <div className="col-md-4">
-              <DjControls />
               <PadButton />
             </div>
           </div>
