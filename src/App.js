@@ -25,48 +25,6 @@ const handleD3Data = (event) => {
   console.log(event.detail);
 };
 
-// export function SetupButtons() {
-//   document
-//     .getElementById("play")
-//     .addEventListener("click", () => globalEditor.evaluate());
-//   document
-//     .getElementById("stop")
-//     .addEventListener("click", () => globalEditor.stop());
-//   document.getElementById("process").addEventListener("click", () => {
-//     Proc();
-//   });
-//   document.getElementById("process_play").addEventListener("click", () => {
-//     if (globalEditor != null) {
-//       Proc();
-//       globalEditor.evaluate();
-//     }
-//   });
-// }
-
-// export function ProcAndPlay() {
-//   if (globalEditor != null && globalEditor.repl.state.started == true) {
-//     console.log(globalEditor);
-//     Proc();
-//     globalEditor.evaluate();
-//   }
-// }
-
-// export function Proc() {
-//   let proc_text = document.getElementById("proc").value;
-//   let proc_text_replaced = proc_text.replaceAll("<p1_Radio>", ProcessText);
-//   ProcessText(proc_text);
-//   globalEditor.setCode(proc_text_replaced);
-// }
-
-// export function ProcessText(match, ...args) {
-//   let replace = "";
-//   if (document.getElementById("flexRadioDefault2").checked) {
-//     replace = "_";
-//   }
-
-//   return replace;
-// }
-
 export default function StrudelDemo() {
   const hasRun = useRef(false);
 
@@ -78,6 +36,30 @@ export default function StrudelDemo() {
 
   const handleStop = () => {
     globalEditor.stop();
+  };
+
+  const ProcessText = (match, ...args) => {
+    let replace = "";
+    if (document.getElementById("flexRadioDefault2").checked) {
+      replace = "_";
+    }
+    return replace;
+  };
+
+  const handleProc = () => {
+    const processedCode = musicNotes.replaceAll("<p1_Radio>", ProcessText);
+    if (globalEditor) {
+      globalEditor.setCode(musicNotes);
+    }
+    setMusicNotes(processedCode);
+  };
+
+  const handleProcAndPlay = () => {
+    if (globalEditor != null && globalEditor.repl.state.started == true) {
+      console.log(globalEditor);
+      handleProc();
+      globalEditor.evaluate();
+    }
   };
 
   useEffect(() => {
@@ -141,7 +123,10 @@ export default function StrudelDemo() {
             </div>
             <div className="col-md-4">
               <nav>
-                <ProcButtons />
+                <ProcButtons
+                  onProc={handleProc}
+                  onProcPlay={handleProcAndPlay}
+                />
                 <br />
                 <PlayButtons onPlay={handlePlay} onStop={handleStop} />
               </nav>
