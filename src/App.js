@@ -29,6 +29,12 @@ export default function StrudelDemo() {
   const hasRun = useRef(false);
 
   const [musicNotes, setMusicNotes] = useState(stranger_tune);
+  
+  const [instrunmentToggles, setInstrunmentToggles] = useState({
+    bass: true,
+    arp: true,
+    drums1: false,
+  });
 
   const handlePlay = () => {
     globalEditor.evaluate();
@@ -48,10 +54,21 @@ export default function StrudelDemo() {
 
   const handleProc = () => {
     const processedCode = musicNotes.replaceAll("<p1_Radio>", ProcessText);
+
+    if (!instrunmentToggles.bass) {
+      processedCode = processedCode.replaceAll("<pad_bass>", "_");
+    }
+    if (!instrunmentToggles.arp) {
+      processedCode = processedCode.replaceAll("<pad_arp>", "_");
+    }
+    if (!instrunmentToggles.drums1) {
+      processedCode = processedCode.replaceAll("<pad_drums1>", "_");
+    }
+
     if (globalEditor) {
       globalEditor.setCode(processedCode);
     }
-    setMusicNotes(processedCode)
+    setMusicNotes(processedCode);
   };
 
   const handleProcAndPlay = () => {
@@ -60,6 +77,10 @@ export default function StrudelDemo() {
       handleProc();
       handlePlay();
     }
+  };
+
+  const handlePadToggle = (name, newState) => {
+    setInstrunmentToggles((prev) => ({ ...prev, name: newState }));
   };
 
   useEffect(() => {
@@ -141,7 +162,18 @@ export default function StrudelDemo() {
               <div id="output" />
             </div>
             <div className="col-md-4">
-              <PadButton />
+              <PadButton
+                onToggle={() => handlePadToggle("arp", !instrunmentToggles.arp)}
+                active={instrunmentToggles.arp}
+              />
+              <PadButton
+                onToggle={() => handlePadToggle("bass", !instrunmentToggles.bass)}
+                active={instrunmentToggles.bass}
+              />
+              <PadButton
+                onToggle={() => handlePadToggle("drums1", !instrunmentToggles.drums1)}
+                active={instrunmentToggles.drums1}
+              />
             </div>
           </div>
         </div>
