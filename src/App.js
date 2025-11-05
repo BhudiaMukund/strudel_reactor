@@ -18,6 +18,7 @@ import DjControls from "./components/DjControls";
 import PlayButtons from "./components/PlayButtons";
 import ProcButtons from "./components/ProcButtons";
 import PreprocessText from "./components/PreprocessText";
+import PadButton from "./components/PadButton";
 
 let globalEditor = null;
 
@@ -142,6 +143,7 @@ export default function StrudelDemo() {
             </div>
             <div className="col-md-4">
               <DjControls />
+              <PadButton />
             </div>
           </div>
         </div>
