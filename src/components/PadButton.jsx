@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-const PadButton = ({active, handleToggle}) => {
+const PadButton = ({active, onToggle}) => {
 //   const [active, setActive] = useState(false);
 
   //   Animate a click by controlling the Active state.
@@ -19,7 +19,7 @@ const PadButton = ({active, handleToggle}) => {
     // setActive(true);
   };
 
-  return <Container $active={active} onClick={handleToggle}></Container>;
+  return <Container $active={active} onClick={onToggle}></Container>;
 };
 
 export default PadButton;

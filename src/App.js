@@ -28,8 +28,9 @@ const handleD3Data = (event) => {
 export default function StrudelDemo() {
   const hasRun = useRef(false);
 
+  const [originalNotes, setOriginalNotes] = useState(stranger_tune);
   const [musicNotes, setMusicNotes] = useState(stranger_tune);
-  
+
   const [instrunmentToggles, setInstrunmentToggles] = useState({
     bass: true,
     arp: true,
@@ -37,37 +38,38 @@ export default function StrudelDemo() {
   });
 
   const handlePlay = () => {
-    globalEditor.evaluate();
+    if (globalEditor) {
+      globalEditor.evaluate();
+    }
   };
 
   const handleStop = () => {
     globalEditor.stop();
   };
 
-  const ProcessText = (match, ...args) => {
-    let replace = "";
-    if (document.getElementById("flexRadioDefault2").checked) {
-      replace = "_";
-    }
-    return replace;
-  };
-
   const handleProc = () => {
-    const processedCode = musicNotes.replaceAll("<p1_Radio>", ProcessText);
+    let processedCode = originalNotes;
 
     if (!instrunmentToggles.bass) {
       processedCode = processedCode.replaceAll("<pad_bass>", "_");
+    } else {
+      processedCode = processedCode.replaceAll("<pad_bass>", "");
     }
     if (!instrunmentToggles.arp) {
       processedCode = processedCode.replaceAll("<pad_arp>", "_");
+    } else {
+      processedCode = processedCode.replaceAll("<pad_arp>", "");
     }
     if (!instrunmentToggles.drums1) {
       processedCode = processedCode.replaceAll("<pad_drums1>", "_");
+    } else {
+      processedCode = processedCode.replaceAll("<pad_drums1>", "");
     }
 
     if (globalEditor) {
       globalEditor.setCode(processedCode);
     }
+
     setMusicNotes(processedCode);
   };
 
@@ -80,7 +82,7 @@ export default function StrudelDemo() {
   };
 
   const handlePadToggle = (name, newState) => {
-    setInstrunmentToggles((prev) => ({ ...prev, name: newState }));
+    setInstrunmentToggles((prev) => ({ ...prev, [name]: newState }));
   };
 
   useEffect(() => {
@@ -120,12 +122,17 @@ export default function StrudelDemo() {
         },
       });
 
-      document.getElementById("proc").value = stranger_tune;
+      // document.getElementById("proc").value = stranger_tune;
       //   SetupButtons();
       //   Proc();
     }
+    // handleProc();
     globalEditor.setCode(musicNotes);
   }, [musicNotes]);
+
+  useEffect(() => {
+    handleProcAndPlay();
+  }, [instrunmentToggles]);
 
   return (
     <div>
@@ -138,8 +145,8 @@ export default function StrudelDemo() {
               style={{ maxHeight: "50vh", overflowY: "auto" }}
             >
               <PreprocessText
-                defaultValue={musicNotes}
-                handleChange={(e) => setMusicNotes(e.target.value)}
+                defaultValue={originalNotes}
+                handleChange={(e) => setOriginalNotes(e.target.value)}
               />
             </div>
             <div className="col-md-4">
@@ -167,11 +174,15 @@ export default function StrudelDemo() {
                 active={instrunmentToggles.arp}
               />
               <PadButton
-                onToggle={() => handlePadToggle("bass", !instrunmentToggles.bass)}
+                onToggle={() =>
+                  handlePadToggle("bass", !instrunmentToggles.bass)
+                }
                 active={instrunmentToggles.bass}
               />
               <PadButton
-                onToggle={() => handlePadToggle("drums1", !instrunmentToggles.drums1)}
+                onToggle={() =>
+                  handlePadToggle("drums1", !instrunmentToggles.drums1)
+                }
                 active={instrunmentToggles.drums1}
               />
             </div>
