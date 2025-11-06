@@ -18,6 +18,7 @@ import PlayButtons from "./components/PlayButtons";
 import ProcButtons from "./components/ProcButtons";
 import PreprocessText from "./components/PreprocessText";
 import PadButton from "./components/PadButton";
+import VolumeSlider from "./components/VolumeSlider";
 
 let globalEditor = null;
 
@@ -28,6 +29,7 @@ const handleD3Data = (event) => {
 export default function StrudelDemo() {
   const hasRun = useRef(false);
 
+  // Colour presets for pad buttons.
   const padColours = [
     {
       primary: "#ffb8d7",
@@ -51,9 +53,13 @@ export default function StrudelDemo() {
     },
   ];
 
+  // Keep track of original code for processing.
   const [originalNotes, setOriginalNotes] = useState(stranger_tune);
   const [musicNotes, setMusicNotes] = useState(stranger_tune);
 
+  const [volume, setVolume] = useState(0.5);
+
+  // Presets of instrument states
   const [instrumentToggles, setInstrumentToggles] = useState({
     bass: true,
     arp: true,
@@ -73,22 +79,29 @@ export default function StrudelDemo() {
 
   const handleProc = () => {
     let processedCode = originalNotes;
+    processedCode = processedCode.replace(
+    "//volume",
+    `all(x => x.gain(${volume}))`
+  );
 
+    // Loop through all instrument toggles.
     for (const instrument in instrumentToggles) {
       const isActive = instrumentToggles[instrument];
       const placeholder = `<pad_${instrument}>`;
 
+      // Replace the placeholder with "_" to make instrument inactive.
       if (!isActive) {
         processedCode = processedCode.replaceAll(placeholder, "_");
       } else {
+        // Remove the placeholder to make the instrument active.
         processedCode = processedCode.replaceAll(placeholder, "");
       }
     }
 
+
     if (globalEditor) {
       globalEditor.setCode(processedCode);
     }
-
     setMusicNotes(processedCode);
   };
 
@@ -100,8 +113,14 @@ export default function StrudelDemo() {
     }
   };
 
+  // Toggle the active state of an instrument.
   const handlePadToggle = (name, newState) => {
     setInstrumentToggles((prev) => ({ ...prev, [name]: newState }));
+  };
+
+  const handleVolumeChange = (event) => {
+    setVolume(event.target.value);
+    handleProcAndPlay();
   };
 
   useEffect(() => {
@@ -140,15 +159,11 @@ export default function StrudelDemo() {
           ]);
         },
       });
-
-      // document.getElementById("proc").value = stranger_tune;
-      //   SetupButtons();
-      //   Proc();
     }
-    // handleProc();
     globalEditor.setCode(musicNotes);
   }, [musicNotes]);
 
+  // Update player when an instrument state changes.
   useEffect(() => {
     handleProcAndPlay();
   }, [instrumentToggles]);
@@ -179,6 +194,7 @@ export default function StrudelDemo() {
                 />
                 <PlayButtons onPlay={handlePlay} onStop={handleStop} />
               </nav>
+              <VolumeSlider volume={volume} handleVolumeChange={handleVolumeChange} />
             </div>
           </div>
           <div className="row">
@@ -189,7 +205,9 @@ export default function StrudelDemo() {
               <div id="editor" />
               <div id="output" />
             </div>
-            <div className="col-md-4 pad-btn-container">
+            <div className="col-md-4 pad-btn-container" style={{textAlign:"center"}}>
+
+              {/* Map out all pad buttons on the UI */}
               {Object.entries(instrumentToggles).map(
                 ([name, isActive], index) => (
                   <PadButton
