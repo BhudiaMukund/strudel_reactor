@@ -62,22 +62,6 @@ export default function StrudelDemo() {
       }
     }
 
-    // if (!instrunmentToggles.bass) {
-    //   processedCode = processedCode.replaceAll("<pad_bass>", "_");
-    // } else {
-    //   processedCode = processedCode.replaceAll("<pad_bass>", "");
-    // }
-    // if (!instrunmentToggles.arp) {
-    //   processedCode = processedCode.replaceAll("<pad_arp>", "_");
-    // } else {
-    //   processedCode = processedCode.replaceAll("<pad_arp>", "");
-    // }
-    // if (!instrunmentToggles.drums1) {
-    //   processedCode = processedCode.replaceAll("<pad_drums1>", "_");
-    // } else {
-    //   processedCode = processedCode.replaceAll("<pad_drums1>", "");
-    // }
-
     if (globalEditor) {
       globalEditor.setCode(processedCode);
     }
@@ -188,22 +172,6 @@ export default function StrudelDemo() {
                   active={isActive}
                 />
               ))}
-              {/* <PadButton
-                onToggle={() => handlePadToggle("arp", !instrunmentToggles.arp)}
-                active={instrunmentToggles.arp}
-              />
-              <PadButton
-                onToggle={() =>
-                  handlePadToggle("bass", !instrunmentToggles.bass)
-                }
-                active={instrunmentToggles.bass}
-              />
-              <PadButton
-                onToggle={() =>
-                  handlePadToggle("drums1", !instrunmentToggles.drums1)
-                }
-                active={instrunmentToggles.drums1}
-              /> */}
             </div>
           </div>
         </div>
