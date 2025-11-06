@@ -6,7 +6,7 @@ const PreprocessText = ({defaultValue, handleChange}) => {
       <label htmlFor="exampleFormControlTextarea1" className="form-label">
         Text to preprocess:
       </label>
-      <textarea className="form-control" defaultValue={defaultValue} onChange={handleChange} rows="15" id="proc"></textarea>
+      <textarea className="form-control" defaultValue={defaultValue} onChange={handleChange} rows="10" id="proc"></textarea>
     </>
   );
 };

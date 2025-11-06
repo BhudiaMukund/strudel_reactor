@@ -12,26 +12,51 @@ import {
 import { registerSoundfonts } from "@strudel/soundfonts";
 import { stranger_tune } from "./tunes";
 import console_monkey_patch, { getD3Data } from "./console-monkey-patch";
+import * as d3 from "d3";
 
 // Components
 import PlayButtons from "./components/PlayButtons";
 import ProcButtons from "./components/ProcButtons";
 import PreprocessText from "./components/PreprocessText";
 import PadButton from "./components/PadButton";
+import Graph from "./components/Graph";
 
 let globalEditor = null;
 
-const handleD3Data = (event) => {
-  console.log(event.detail);
-};
+// const handleD3Data = (event) => {
+//   console.log(event.detail);
+// };
 
 export default function StrudelDemo() {
   const hasRun = useRef(false);
 
+  const padColours = [
+    {
+      primary: "#ffb8d7",
+      secondary: "#a109a3",
+      tertiary: "#a009a3a0",
+    },
+    {
+      primary: "#f3f874ff",
+      secondary: "#d2d900",
+      tertiary: "#d2d900b0",
+    },
+    {
+      primary: "#97f4efff",
+      secondary: "#01c6bd",
+      tertiary: "#01c6bcaf",
+    },
+    {
+      primary: "#92fab6ff",
+      secondary: "#01ac3c",
+      tertiary: "#01ac3da4",
+    },
+  ];
+
   const [originalNotes, setOriginalNotes] = useState(stranger_tune);
   const [musicNotes, setMusicNotes] = useState(stranger_tune);
 
-  const [instrunmentToggles, setInstrunmentToggles] = useState({
+  const [instrumentToggles, setInstrumentToggles] = useState({
     bass: true,
     arp: true,
     drums1: true,
@@ -51,11 +76,11 @@ export default function StrudelDemo() {
   const handleProc = () => {
     let processedCode = originalNotes;
 
-    for (const instrunment in instrunmentToggles) {
-      const isActive = instrunmentToggles[instrunment];
-      const placeholder = `<pad_${instrunment}>`;
+    for (const instrument in instrumentToggles) {
+      const isActive = instrumentToggles[instrument];
+      const placeholder = `<pad_${instrument}>`;
 
-      if (isActive) {
+      if (!isActive) {
         processedCode = processedCode.replaceAll(placeholder, "_");
       } else {
         processedCode = processedCode.replaceAll(placeholder, "");
@@ -78,7 +103,7 @@ export default function StrudelDemo() {
   };
 
   const handlePadToggle = (name, newState) => {
-    setInstrunmentToggles((prev) => ({ ...prev, [name]: newState }));
+    setInstrumentToggles((prev) => ({ ...prev, [name]: newState }));
   };
 
   useEffect(() => {
@@ -128,11 +153,18 @@ export default function StrudelDemo() {
 
   useEffect(() => {
     handleProcAndPlay();
-  }, [instrunmentToggles]);
+  }, [instrumentToggles]);
+
+  const [graphData, setGraphData] = useState([]);
+
+  const handleD3Data = (event) => {
+    const { freq, time } = event.detail;
+    setGraphData((prev) => [...prev.slice(-50), { time, freq }]);
+  };
 
   return (
     <div>
-      <h2>Strudel Demo</h2>
+      <h2>Strudel Player</h2>
       <main>
         <div className="container-fluid">
           <div className="row">
@@ -165,18 +197,22 @@ export default function StrudelDemo() {
               <div id="output" />
             </div>
             <div className="col-md-4">
-              {Object.entries(instrunmentToggles).map(([name, isActive]) => (
-                <PadButton
-                  key={name}
-                  onToggle={() => handlePadToggle(name, !isActive)}
-                  active={isActive}
-                />
-              ))}
+              {Object.entries(instrumentToggles).map(
+                ([name, isActive], index) => (
+                  <PadButton
+                    key={name}
+                    onToggle={() => handlePadToggle(name, !isActive)}
+                    active={isActive}
+                    colours={padColours[index % 4]}
+                  />
+                )
+              )}
             </div>
           </div>
         </div>
         <canvas id="roll"></canvas>
       </main>
+      <Graph data={graphData} />
     </div>
   );
 }
