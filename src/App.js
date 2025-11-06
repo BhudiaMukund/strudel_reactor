@@ -34,7 +34,8 @@ export default function StrudelDemo() {
   const [instrunmentToggles, setInstrunmentToggles] = useState({
     bass: true,
     arp: true,
-    drums1: false,
+    drums1: true,
+    drums2: true,
   });
 
   const handlePlay = () => {
@@ -50,21 +51,32 @@ export default function StrudelDemo() {
   const handleProc = () => {
     let processedCode = originalNotes;
 
-    if (!instrunmentToggles.bass) {
-      processedCode = processedCode.replaceAll("<pad_bass>", "_");
-    } else {
-      processedCode = processedCode.replaceAll("<pad_bass>", "");
+    for (const instrunment in instrunmentToggles) {
+      const isActive = instrunmentToggles[instrunment];
+      const placeholder = `<pad_${instrunment}>`;
+
+      if (isActive) {
+        processedCode = processedCode.replaceAll(placeholder, "_");
+      } else {
+        processedCode = processedCode.replaceAll(placeholder, "");
+      }
     }
-    if (!instrunmentToggles.arp) {
-      processedCode = processedCode.replaceAll("<pad_arp>", "_");
-    } else {
-      processedCode = processedCode.replaceAll("<pad_arp>", "");
-    }
-    if (!instrunmentToggles.drums1) {
-      processedCode = processedCode.replaceAll("<pad_drums1>", "_");
-    } else {
-      processedCode = processedCode.replaceAll("<pad_drums1>", "");
-    }
+
+    // if (!instrunmentToggles.bass) {
+    //   processedCode = processedCode.replaceAll("<pad_bass>", "_");
+    // } else {
+    //   processedCode = processedCode.replaceAll("<pad_bass>", "");
+    // }
+    // if (!instrunmentToggles.arp) {
+    //   processedCode = processedCode.replaceAll("<pad_arp>", "_");
+    // } else {
+    //   processedCode = processedCode.replaceAll("<pad_arp>", "");
+    // }
+    // if (!instrunmentToggles.drums1) {
+    //   processedCode = processedCode.replaceAll("<pad_drums1>", "_");
+    // } else {
+    //   processedCode = processedCode.replaceAll("<pad_drums1>", "");
+    // }
 
     if (globalEditor) {
       globalEditor.setCode(processedCode);
@@ -169,7 +181,14 @@ export default function StrudelDemo() {
               <div id="output" />
             </div>
             <div className="col-md-4">
-              <PadButton
+              {Object.entries(instrunmentToggles).map(([name, isActive]) => (
+                <PadButton
+                  key={name}
+                  onToggle={() => handlePadToggle(name, !isActive)}
+                  active={isActive}
+                />
+              ))}
+              {/* <PadButton
                 onToggle={() => handlePadToggle("arp", !instrunmentToggles.arp)}
                 active={instrunmentToggles.arp}
               />
@@ -184,7 +203,7 @@ export default function StrudelDemo() {
                   handlePadToggle("drums1", !instrunmentToggles.drums1)
                 }
                 active={instrunmentToggles.drums1}
-              />
+              /> */}
             </div>
           </div>
         </div>
