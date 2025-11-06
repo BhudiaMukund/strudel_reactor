@@ -1,38 +1,56 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-const PadButton = ({active, onToggle, colours}) => {
-//   const [active, setActive] = useState(false);
+const PadButton = ({ label, active, onToggle, colours }) => {
+  //   const [active, setActive] = useState(false);
 
   //   Animate a click by controlling the Active state.
-//   useEffect(() => {
-//     if (active) {
-//       const timer = setTimeout(() => {
-//         setActive(false);
-//       }, 150);
+  //   useEffect(() => {
+  //     if (active) {
+  //       const timer = setTimeout(() => {
+  //         setActive(false);
+  //       }, 150);
 
-//       return () => clearTimeout(timer);
-//     }
-//   }, [active]);
+  //       return () => clearTimeout(timer);
+  //     }
+  //   }, [active]);
 
   const handleClick = () => {
     // setActive(true);
   };
 
-  return <Container $active={active} $priColor={colours.primary} $secColor={colours.secondary} $terColor={colours.tertiary} onClick={onToggle}></Container>;
+  return (
+    <Container
+      $active={active}
+      $priColor={colours.primary}
+      $secColor={colours.secondary}
+      $terColor={colours.tertiary}
+      onClick={onToggle}
+    >
+      {label}
+    </Container>
+  );
 };
 
 export default PadButton;
 
 const Container = styled.div`
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color:#373737;
+  font-size: 16px;
   margin: 16px;
   cursor: pointer;
   transition: all 100ms linear;
-  background: ${(props => (props.$active ? `${props.$priColor}` : "#888"))};
-  background: ${(props => (props.$active ? `radial-gradient(at center, ${props.$priColor}, ${props.$secColor})` : "radial-gradient(at center, #c5c5c5, #888)"))};
+  background: ${(props) => (props.$active ? `${props.$priColor}` : "#888")};
+  background: ${(props) =>
+    props.$active
+      ? `radial-gradient(at center, ${props.$priColor}, ${props.$secColor})`
+      : "radial-gradient(at center, #c5c5c5, #888)"};
 
   /* Dynamic properties based on the active state
   of the button to animate a click. */

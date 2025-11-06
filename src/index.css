@@ -18,3 +18,21 @@ h6 {
     font-family: 'Archivo Black', sans-serif;
     text-transform: uppercase;
 }
+
+.pad-btn-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.controls-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+
+.canvas-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

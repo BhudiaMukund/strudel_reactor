@@ -12,20 +12,18 @@ import {
 import { registerSoundfonts } from "@strudel/soundfonts";
 import { stranger_tune } from "./tunes";
 import console_monkey_patch, { getD3Data } from "./console-monkey-patch";
-import * as d3 from "d3";
 
 // Components
 import PlayButtons from "./components/PlayButtons";
 import ProcButtons from "./components/ProcButtons";
 import PreprocessText from "./components/PreprocessText";
 import PadButton from "./components/PadButton";
-import Graph from "./components/Graph";
 
 let globalEditor = null;
 
-// const handleD3Data = (event) => {
-//   console.log(event.detail);
-// };
+const handleD3Data = (event) => {
+  console.log(event.detail);
+};
 
 export default function StrudelDemo() {
   const hasRun = useRef(false);
@@ -115,7 +113,7 @@ export default function StrudelDemo() {
       //init canvas
       const canvas = document.getElementById("roll");
       canvas.width = canvas.width * 2;
-      canvas.height = canvas.height * 2;
+      canvas.height = canvas.height;
       const drawContext = canvas.getContext("2d");
       const drawTime = [-2, 2]; // time window of drawn haps
       globalEditor = new StrudelMirror({
@@ -155,13 +153,6 @@ export default function StrudelDemo() {
     handleProcAndPlay();
   }, [instrumentToggles]);
 
-  const [graphData, setGraphData] = useState([]);
-
-  const handleD3Data = (event) => {
-    const { freq, time } = event.detail;
-    setGraphData((prev) => [...prev.slice(-50), { time, freq }]);
-  };
-
   return (
     <div>
       <h2>Strudel Player</h2>
@@ -178,12 +169,14 @@ export default function StrudelDemo() {
               />
             </div>
             <div className="col-md-4">
-              <nav>
+              <div className="canvas-container">
+                <canvas id="roll"></canvas>
+              </div>
+              <nav className="controls-container">
                 <ProcButtons
                   onProc={handleProc}
                   onProcPlay={handleProcAndPlay}
                 />
-                <br />
                 <PlayButtons onPlay={handlePlay} onStop={handleStop} />
               </nav>
             </div>
@@ -196,7 +189,7 @@ export default function StrudelDemo() {
               <div id="editor" />
               <div id="output" />
             </div>
-            <div className="col-md-4">
+            <div className="col-md-4 pad-btn-container">
               {Object.entries(instrumentToggles).map(
                 ([name, isActive], index) => (
                   <PadButton
@@ -204,15 +197,14 @@ export default function StrudelDemo() {
                     onToggle={() => handlePadToggle(name, !isActive)}
                     active={isActive}
                     colours={padColours[index % 4]}
+                    label={name}
                   />
                 )
               )}
             </div>
           </div>
         </div>
-        <canvas id="roll"></canvas>
       </main>
-      <Graph data={graphData} />
     </div>
   );
 }
