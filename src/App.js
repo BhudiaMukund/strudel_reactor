@@ -183,9 +183,34 @@ export default function StrudelDemo() {
     handleProcAndPlay();
   }, [instrumentToggles]);
 
+  const handleExport = (downloadRef) => {
+    const toExport = {
+      settings: {
+        volume,
+        cps,
+        reverb,
+        lpf,
+      },
+      instruments: instrumentToggles,
+      originalCode: originalNotes,
+    };
+
+    const json = JSON.stringify(toExport);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const link = downloadRef.current;
+    link.href = url;
+    link.download = "strudel_preset.json";
+    link.click();
+
+    // Free memory from BLOB.
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div>
-      <Navbar />
+      <Navbar onExport={handleExport} />
       <main>
         <div className="container-fluid">
           <div className="row">

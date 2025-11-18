@@ -1,14 +1,32 @@
+import { useRef } from "react";
 import styled from "styled-components";
 
-const Navbar = () => {
+const Navbar = ({ onExport }) => {
+  const downloadRef = useRef(null);
   return (
     <NavbarContainer>
       <h2>Strudel Reactor</h2>
-      <div className="settings-container">
-        <button className="btn btn-secondary">
+
+      <div className="dropdown">
+        <button
+          className="btn btn-secondary dropdown-toggle"
+          data-bs-toggle="dropdown"
+        >
           <span className="material-symbols-outlined">settings</span>
         </button>
+        <ul class="dropdown-menu">
+          <li>
+            <button
+              className="dropdown-item"
+              onClick={() => onExport(downloadRef)}
+            >
+              Export Preset JSON
+            </button>
+          </li>
+        </ul>
       </div>
+      {/* Hidden link for exporting */}
+      <a ref={downloadRef} style={{ display: "none" }}>download</a>
     </NavbarContainer>
   );
 };
