@@ -6,11 +6,9 @@ const PerformanceControls = ({
   cps,
   reverb,
   lpf,
-  patternIndex,
   setCps,
   setReverb,
   setLpf,
-  setPatternIndex,
   handleProcAndPlay,
 }) => {
   return (

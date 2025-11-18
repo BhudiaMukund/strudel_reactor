@@ -65,12 +65,7 @@ export default function StrudelDemo() {
   const [lpf, setLpf] = useState(2000);
 
   // Presets of instrument states
-  const [instrumentToggles, setInstrumentToggles] = useState({
-    bass: true,
-    arp: true,
-    drums1: true,
-    drums2: true,
-  });
+  const [instrumentToggles, setInstrumentToggles] = useState({});
 
   const handlePlay = () => {
     if (globalEditor) {
@@ -81,6 +76,26 @@ export default function StrudelDemo() {
   const handleStop = () => {
     globalEditor.stop();
   };
+
+  const extractInstruments = (code) => {
+    const matches = [...code.matchAll(/<\$(.*?)\$>/g)];
+    return matches.map((m) => m[1]);
+  };
+  const handlePadToggle = (name, newState) => {
+    setInstrumentToggles((prev) => ({ ...prev, [name]: newState }));
+  };
+
+  useEffect(() => {
+    // UI Logic for adding pads.
+    const instruments = extractInstruments(originalNotes);
+    setInstrumentToggles((prev) => {
+      const updated = { ...prev };
+      instruments.forEach((name) => {
+        if (!(name in updated)) updated[name] = true; // default ON
+      });
+      return updated;
+    });
+  }, [originalNotes]);
 
   const handleProc = () => {
     let processedCode = originalNotes;
@@ -95,12 +110,10 @@ export default function StrudelDemo() {
     );
     processedCode = processedCode.replace("//lpf", `all(x => x.lpf(${lpf}))`);
 
-    processedCode = processedCode.replace("//pattern", patternIndex);
-
     // Loop through all instrument toggles.
     for (const instrument in instrumentToggles) {
       const isActive = instrumentToggles[instrument];
-      const placeholder = `<pad_${instrument}>`;
+      const placeholder = `<$${instrument}$>`;
 
       // Replace the placeholder with "_" to make instrument inactive.
       if (!isActive) {
@@ -123,11 +136,6 @@ export default function StrudelDemo() {
       handleProc();
       handlePlay();
     }
-  };
-
-  // Toggle the active state of an instrument.
-  const handlePadToggle = (name, newState) => {
-    setInstrumentToggles((prev) => ({ ...prev, [name]: newState }));
   };
 
   useEffect(() => {
@@ -241,17 +249,14 @@ export default function StrudelDemo() {
                   }}
                   onMouseUp={handleProcAndPlay}
                 />
-
               </div>
               <PerformanceControls
                 cps={cps}
                 reverb={reverb}
                 lpf={lpf}
-                patternIndex={patternIndex}
                 setCps={setCps}
                 setReverb={setReverb}
                 setLpf={setLpf}
-                setPatternIndex={setPatternIndex}
                 handleProcAndPlay={handleProcAndPlay}
               />
             </div>
