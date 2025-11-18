@@ -1,12 +1,17 @@
 html,
 body {
-    background: #222;
     color: white;
     font-family: "Poppins", sans-serif;
 }
 
 body {
+    background: radial-gradient(circle at top, #2d1d3b 45%, #0d0d0d 100%) !important;
+    min-height: 100vh;
+}
+
+main {
     padding: 20px 5px;
+
 }
 
 h1,
@@ -35,4 +40,28 @@ h6 {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.element {
+    background: rgba(20, 20, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 18px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.element-title {
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.pad-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }

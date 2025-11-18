@@ -19,6 +19,7 @@ import ProcButtons from "./components/ProcButtons";
 import PreprocessText from "./components/PreprocessText";
 import PadButton from "./components/PadButton";
 import VolumeSlider from "./components/VolumeSlider";
+import Navbar from "./components/Navbar";
 
 let globalEditor = null;
 
@@ -170,12 +171,12 @@ export default function StrudelDemo() {
 
   return (
     <div>
-      <h2>Strudel Player</h2>
+      <Navbar />
       <main>
         <div className="container-fluid">
           <div className="row">
             <div
-              className="col-md-8"
+              className="col-md-8 element"
               style={{ maxHeight: "50vh", overflowY: "auto" }}
             >
               <PreprocessText
@@ -205,9 +206,10 @@ export default function StrudelDemo() {
               <div id="editor" />
               <div id="output" />
             </div>
-            <div className="col-md-4 pad-btn-container" style={{textAlign:"center"}}>
-
-              {/* Map out all pad buttons on the UI */}
+            <div className="col-md-4 pad-btn-container element" style={{textAlign:"center"}}>
+              <h2 className="element-title">Instrument Pad</h2>
+              <div className="pad-container">
+                {/* Map out all pad buttons on the UI */}
               {Object.entries(instrumentToggles).map(
                 ([name, isActive], index) => (
                   <PadButton
@@ -219,6 +221,8 @@ export default function StrudelDemo() {
                   />
                 )
               )}
+              </div>
+              
             </div>
           </div>
         </div>
