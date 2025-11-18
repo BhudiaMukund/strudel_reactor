@@ -97,4 +97,7 @@ stack(
 // all(x => x.gain(mouseX.range(0,1)))
 // all(x => x.log())
 //volume
+//tempo
+//reverb
+//lpf
 // @version 1.2`;

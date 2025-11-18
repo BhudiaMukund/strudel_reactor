@@ -6,7 +6,7 @@ body {
 
 body {
     background: radial-gradient(circle at top, #2d1d3b 45%, #0d0d0d 100%) !important;
-    min-height: 100vh;
+    /* min-height: 100vh; */
 }
 
 main {
@@ -50,6 +50,8 @@ h6 {
     padding: 1.75rem;
     display: flex;
     flex-direction: column;
+    height: auto !important;
+    align-self: flex-start;
 }
 
 .element-title {
@@ -64,4 +66,16 @@ h6 {
 .pad-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
+}
+
+.accordion-item,.accordion-button {
+    background-color: transparent;
+    border-color: #714994;
+}
+.accordion-button {
+    color: white;
+}
+
+.accordion-item {
+    color: aliceblue;
 }

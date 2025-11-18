@@ -18,8 +18,9 @@ import PlayButtons from "./components/PlayButtons";
 import ProcButtons from "./components/ProcButtons";
 import PreprocessText from "./components/PreprocessText";
 import PadButton from "./components/PadButton";
-import VolumeSlider from "./components/VolumeSlider";
 import Navbar from "./components/Navbar";
+import PerformanceControls from "./components/PerformanceControls";
+import CustomSlider from "./components/CustomSlider";
 
 let globalEditor = null;
 
@@ -59,6 +60,9 @@ export default function StrudelDemo() {
   const [musicNotes, setMusicNotes] = useState(stranger_tune);
 
   const [volume, setVolume] = useState(0.5);
+  const [cps, setCps] = useState(0.58);
+  const [reverb, setReverb] = useState(0.4);
+  const [lpf, setLpf] = useState(2000);
 
   // Presets of instrument states
   const [instrumentToggles, setInstrumentToggles] = useState({
@@ -81,9 +85,17 @@ export default function StrudelDemo() {
   const handleProc = () => {
     let processedCode = originalNotes;
     processedCode = processedCode.replace(
-    "//volume",
-    `all(x => x.gain(${volume}))`
-  );
+      "//volume",
+      `all(x => x.gain(${volume}))`
+    );
+    processedCode = processedCode.replace("//tempo", `setcps(${cps})`);
+    processedCode = processedCode.replace(
+      "//reverb",
+      `all(x => x.room(${reverb}))`
+    );
+    processedCode = processedCode.replace("//lpf", `all(x => x.lpf(${lpf}))`);
+
+    processedCode = processedCode.replace("//pattern", patternIndex);
 
     // Loop through all instrument toggles.
     for (const instrument in instrumentToggles) {
@@ -98,7 +110,6 @@ export default function StrudelDemo() {
         processedCode = processedCode.replaceAll(placeholder, "");
       }
     }
-
 
     if (globalEditor) {
       globalEditor.setCode(processedCode);
@@ -117,11 +128,6 @@ export default function StrudelDemo() {
   // Toggle the active state of an instrument.
   const handlePadToggle = (name, newState) => {
     setInstrumentToggles((prev) => ({ ...prev, [name]: newState }));
-  };
-
-  const handleVolumeChange = (event) => {
-    setVolume(event.target.value);
-    handleProcAndPlay();
   };
 
   useEffect(() => {
@@ -175,54 +181,79 @@ export default function StrudelDemo() {
       <main>
         <div className="container-fluid">
           <div className="row">
-            <div
-              className="col-md-8 element"
-              style={{ maxHeight: "50vh", overflowY: "auto" }}
-            >
+            <div className="col-md-8" style={{ overflowY: "auto" }}>
               <PreprocessText
                 defaultValue={originalNotes}
                 handleChange={(e) => setOriginalNotes(e.target.value)}
               />
+              <div
+                className="row-md-8 mt-3"
+                style={{ maxHeight: "50vh", overflowY: "auto" }}
+              >
+                <div id="editor" />
+                <div id="output" />
+              </div>
             </div>
+
             <div className="col-md-4">
-              <div className="canvas-container">
-                <canvas id="roll"></canvas>
+              <div
+                className="row pad-btn-container element"
+                style={{ textAlign: "center" }}
+              >
+                <h2 className="element-title">Instrument Pad</h2>
+                <div className="pad-container">
+                  {/* Map out all pad buttons on the UI */}
+                  {Object.entries(instrumentToggles).map(
+                    ([name, isActive], index) => (
+                      <PadButton
+                        key={name}
+                        onToggle={() => handlePadToggle(name, !isActive)}
+                        active={isActive}
+                        colours={padColours[index % 4]}
+                        label={name}
+                      />
+                    )
+                  )}
+                </div>
               </div>
-              <nav className="controls-container">
-                <ProcButtons
-                  onProc={handleProc}
-                  onProcPlay={handleProcAndPlay}
-                />
-                <PlayButtons onPlay={handlePlay} onStop={handleStop} />
-              </nav>
-              <VolumeSlider volume={volume} handleVolumeChange={handleVolumeChange} />
-            </div>
-          </div>
-          <div className="row">
-            <div
-              className="col-md-8"
-              style={{ maxHeight: "50vh", overflowY: "auto" }}
-            >
-              <div id="editor" />
-              <div id="output" />
-            </div>
-            <div className="col-md-4 pad-btn-container element" style={{textAlign:"center"}}>
-              <h2 className="element-title">Instrument Pad</h2>
-              <div className="pad-container">
-                {/* Map out all pad buttons on the UI */}
-              {Object.entries(instrumentToggles).map(
-                ([name, isActive], index) => (
-                  <PadButton
-                    key={name}
-                    onToggle={() => handlePadToggle(name, !isActive)}
-                    active={isActive}
-                    colours={padColours[index % 4]}
-                    label={name}
+              <div className="row">
+                <div className="canvas-container">
+                  <canvas id="roll"></canvas>
+                </div>
+                <nav className="controls-container">
+                  <ProcButtons
+                    onProc={handleProc}
+                    onProcPlay={handleProcAndPlay}
                   />
-                )
-              )}
+                  <PlayButtons onPlay={handlePlay} onStop={handleStop} />
+                </nav>
+
+                {/* Volume Slider */}
+                <CustomSlider
+                  label="Volume"
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  displayValue={volume * 100}
+                  value={volume}
+                  onChange={(e) => {
+                    setVolume(e.target.value);
+                  }}
+                  onMouseUp={handleProcAndPlay}
+                />
+
               </div>
-              
+              <PerformanceControls
+                cps={cps}
+                reverb={reverb}
+                lpf={lpf}
+                patternIndex={patternIndex}
+                setCps={setCps}
+                setReverb={setReverb}
+                setLpf={setLpf}
+                setPatternIndex={setPatternIndex}
+                handleProcAndPlay={handleProcAndPlay}
+              />
             </div>
           </div>
         </div>
