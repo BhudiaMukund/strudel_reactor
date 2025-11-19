@@ -1,12 +1,26 @@
 import React from "react";
 import styled from "styled-components";
 
-const CustomSlider = ({ label, min, max, step, value, onChange, onMouseUp, precision, displayValue }) => {
+const CustomSlider = ({
+  label,
+  min,
+  max,
+  step,
+  value,
+  onChange,
+  onMouseUp,
+  precision,
+  displayValue,
+}) => {
   return (
     <SliderContainer>
+      {/* Label and formatted value */}
       <label>
-        {label} : <span>{Number(displayValue || value).toFixed(precision || 0)}</span>
+        {label} :{" "}
+        <span>{Number(displayValue || value).toFixed(precision || 0)}</span>
       </label>
+
+      {/* Range input slider */}
       <input
         className="slider"
         type="range"
@@ -42,7 +56,7 @@ const SliderContainer = styled.div`
     outline: none;
     transition: background 0.3s;
     cursor: pointer;
-    
+
     &::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;

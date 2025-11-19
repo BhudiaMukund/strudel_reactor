@@ -28,7 +28,7 @@ const PreprocessText = ({ defaultValue, handleChange }) => {
           >
             <TextArea
               className="form-control"
-              defaultValue={defaultValue}
+              value={defaultValue}
               onChange={handleChange}
               rows="8"
               id="proc"

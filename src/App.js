@@ -14,21 +14,19 @@ import { stranger_tune } from "./tunes";
 import console_monkey_patch, { getD3Data } from "./console-monkey-patch";
 
 // Components
-import PlayButtons from "./components/PlayButtons";
-import ProcButtons from "./components/ProcButtons";
-import PreprocessText from "./components/PreprocessText";
-import PadButton from "./components/PadButton";
-import Navbar from "./components/Navbar";
-import PerformanceControls from "./components/PerformanceControls";
-import CustomSlider from "./components/CustomSlider";
 import { useToast } from "./components/ToastContext";
-import Graph from "./components/Graph";
+import {
+  PlayButtons,
+  ProcButtons,
+  PreprocessText,
+  PadButton,
+  Navbar,
+  PerformanceControls,
+  CustomSlider,
+  Graph,
+} from "./components";
 
 let globalEditor = null;
-
-// const handleD3Data = (event) => {
-//   console.log(event.detail);
-// };
 
 export default function StrudelDemo() {
   const { showToast } = useToast();
@@ -62,6 +60,7 @@ export default function StrudelDemo() {
   const [originalNotes, setOriginalNotes] = useState(stranger_tune);
   const [musicNotes, setMusicNotes] = useState(stranger_tune);
 
+  // Performance control states.
   const [volume, setVolume] = useState(0.5);
   const [cps, setCps] = useState(0.58);
   const [reverb, setReverb] = useState(0.4);
@@ -80,25 +79,29 @@ export default function StrudelDemo() {
     globalEditor.stop();
   };
 
+  // Reads all <$instrument$> blocks from the code
   const extractInstruments = (code) => {
     const matches = [...code.matchAll(/<\$(.*?)\$>/g)];
     return matches.map((m) => m[1]);
   };
+
+  // Toggle instrument on/off.
   const handlePadToggle = (name, newState) => {
     setInstrumentToggles((prev) => ({ ...prev, [name]: newState }));
   };
 
+  // Reset instrument pads whenever code changes.
   useEffect(() => {
-  const instruments = extractInstruments(originalNotes);
-  const newToggles = {};
-  instruments.forEach(name => {
-    newToggles[name] = true; 
-  });
+    const instruments = extractInstruments(originalNotes);
+    const newToggles = {};
+    instruments.forEach((name) => {
+      newToggles[name] = true;
+    });
 
-  setInstrumentToggles(newToggles); 
-}, [originalNotes]);
+    setInstrumentToggles(newToggles);
+  }, [originalNotes]);
 
-
+  // Inject slider values and instrument toggles into the Strudel code.
   const handleProc = () => {
     let processedCode = originalNotes;
     processedCode = processedCode.replace(
@@ -132,6 +135,7 @@ export default function StrudelDemo() {
     setMusicNotes(processedCode);
   };
 
+  // Apply processing and immediately play.
   const handleProcAndPlay = () => {
     if (globalEditor) {
       console.log(globalEditor);
@@ -140,30 +144,36 @@ export default function StrudelDemo() {
     }
   };
 
-   const [ampData, setAmpData] = useState([]);
+  // Live amplitude graph data
+  const [ampData, setAmpData] = useState([]);
 
-const handleD3Data = useCallback((event) => {
-  const { time, amplitude } = event.detail;
-  if (typeof amplitude !== "number") return;
+  // Handle CustomEvent from console-monkey-patch
+  const handleD3Data = useCallback((event) => {
+    const { time, amplitude } = event.detail;
+    if (typeof amplitude !== "number") return;
 
-  setAmpData(prev => {
-    const next = [...prev, { time, amplitude }];
-    return next.length > 200 ? next.slice(-200) : next;
-  });
-}, []);
+    setAmpData((prev) => {
+      const next = [...prev, { time, amplitude }];
+      return next.length > 200 ? next.slice(-200) : next;
+    });
+  }, []);
 
+  // Initialise Strudel editor and log patching only once.
   useEffect(() => {
     if (!hasRun.current) {
       document.addEventListener("d3Data", handleD3Data);
       console_monkey_patch();
       hasRun.current = true;
       //Code copied from example: https://codeberg.org/uzu/strudel/src/branch/main/examples/codemirror-repl
-      //init canvas
+
+      // Create the piano roll canvas renderer.
       const canvas = document.getElementById("roll");
       canvas.width = canvas.width * 2;
       canvas.height = canvas.height;
       const drawContext = canvas.getContext("2d");
       const drawTime = [-2, 2]; // time window of drawn haps
+
+      // Create Strudel editor
       globalEditor = new StrudelMirror({
         defaultOutput: webaudioOutput,
         getTime: () => getAudioContext().currentTime,
@@ -197,6 +207,7 @@ const handleD3Data = useCallback((event) => {
     handleProcAndPlay();
   }, [instrumentToggles]);
 
+  // Export preset as JSON file
   const handleExport = (downloadRef) => {
     const toExport = {
       settings: {
@@ -222,6 +233,7 @@ const handleD3Data = useCallback((event) => {
     URL.revokeObjectURL(url);
   };
 
+  // Import preset JSON file.
   const handleImportPreset = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -261,8 +273,6 @@ const handleD3Data = useCallback((event) => {
 
     reader.readAsText(file);
   };
-
- 
 
   return (
     <div>

@@ -2,10 +2,14 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const PadButton = ({ label, active, onToggle, colours }) => {
+  /// Changing state restarts animation.
   const [rippleKey, setRippleKey] = useState(0);
 
   const handleClick = (e) => {
+    // Restart ripple animation
     setRippleKey((prev) => prev + 1);
+
+    // Slight delay so the ripple shows before toggling the instrument.
     setTimeout(() => {
       onToggle();
     }, 100);

@@ -1,5 +1,5 @@
 import React from "react";
-import CustomSlider from "./CustomSlider";
+import {CustomSlider} from ".";
 import styled from "styled-components";
 
 const PerformanceControls = ({

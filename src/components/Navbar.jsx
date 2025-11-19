@@ -2,7 +2,10 @@ import { useRef } from "react";
 import styled from "styled-components";
 
 const Navbar = ({ onExport, handleImportPreset }) => {
+  // Hidden anchor tag used to trigger file downloads.
   const downloadRef = useRef(null);
+
+  // Hidden file input used to trigger load dialog.
   const fileInputRef = useRef(null);
 
   return (
