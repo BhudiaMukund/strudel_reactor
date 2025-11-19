@@ -16,7 +16,7 @@ const Navbar = ({ onExport, handleImportPreset }) => {
         >
           <span className="material-symbols-outlined">settings</span>
         </button>
-        <ul class="dropdown-menu">
+        <ul className="dropdown-menu">
           <li>
             <button
               className="dropdown-item"

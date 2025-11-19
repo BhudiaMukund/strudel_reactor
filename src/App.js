@@ -21,6 +21,7 @@ import PadButton from "./components/PadButton";
 import Navbar from "./components/Navbar";
 import PerformanceControls from "./components/PerformanceControls";
 import CustomSlider from "./components/CustomSlider";
+import { useToast } from "./components/ToastContext";
 
 let globalEditor = null;
 
@@ -29,6 +30,7 @@ const handleD3Data = (event) => {
 };
 
 export default function StrudelDemo() {
+  const { showToast } = useToast();
   const hasRun = useRef(false);
 
   // Colour presets for pad buttons.
@@ -101,14 +103,14 @@ export default function StrudelDemo() {
     let processedCode = originalNotes;
     processedCode = processedCode.replace(
       "//volume",
-      `all(x => x.gain(${volume}))`
+      `all(x => x.gain(${volume}));`
     );
-    processedCode = processedCode.replace("//tempo", `setcps(${cps})`);
+    processedCode = processedCode.replace("//tempo", `setcps(${cps});`);
     processedCode = processedCode.replace(
       "//reverb",
-      `all(x => x.room(${reverb}))`
+      `all(x => x.room(${reverb}));`
     );
-    processedCode = processedCode.replace("//lpf", `all(x => x.lpf(${lpf}))`);
+    processedCode = processedCode.replace("//lpf", `all(x => x.lpf(${lpf}));`);
 
     // Loop through all instrument toggles.
     for (const instrument in instrumentToggles) {
@@ -219,7 +221,7 @@ export default function StrudelDemo() {
         const data = JSON.parse(e.target.result);
 
         if (!data.settings || !data.instruments || !data.originalCode) {
-          alert("Invalid preset file format.");
+          showToast("Invalid preset file format.", "danger");
           return;
         }
 
@@ -238,10 +240,10 @@ export default function StrudelDemo() {
         // Reprocess the code and play.
         setTimeout(() => handleProcAndPlay(), 50);
 
-        alert("Preset imported successfully!");
+        showToast("Preset imported successfully!");
       } catch (err) {
         console.error("Import error:", err);
-        alert("Failed to load preset: invalid JSON.");
+        showToast("Failed to load preset: invalid JSON.", "danger");
       }
     };
 
