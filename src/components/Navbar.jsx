@@ -22,6 +22,7 @@ const Navbar = ({ onExport, handleImportPreset }) => {
               className="dropdown-item"
               onClick={() => onExport(downloadRef)}
             >
+              <span className="material-symbols-outlined">file_export</span>
               Export Preset JSON
             </button>
           </li>
@@ -30,7 +31,10 @@ const Navbar = ({ onExport, handleImportPreset }) => {
               className="dropdown-item"
               onClick={() => fileInputRef.current.click()}
             >
-              Import Preset
+              <span className="material-symbols-outlined">
+                move_to_inbox 
+              </span>
+              Import Preset JSON
             </button>
           </li>
         </ul>
@@ -69,5 +73,6 @@ const NavbarContainer = styled.nav`
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 4px;
   }
 `;

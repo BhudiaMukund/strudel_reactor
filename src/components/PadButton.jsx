@@ -2,31 +2,23 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const PadButton = ({ label, active, onToggle, colours }) => {
-  //   const [active, setActive] = useState(false);
+  const [rippleKey, setRippleKey] = useState(0);
 
-  //   Animate a click by controlling the Active state.
-  //   useEffect(() => {
-  //     if (active) {
-  //       const timer = setTimeout(() => {
-  //         setActive(false);
-  //       }, 150);
-
-  //       return () => clearTimeout(timer);
-  //     }
-  //   }, [active]);
-
-  const handleClick = () => {
-    // setActive(true);
+  const handleClick = (e) => {
+    setRippleKey((prev) => prev + 1);
+    setTimeout(() => {
+      onToggle();
+    }, 100);
   };
-
   return (
     <Container
       $active={active}
       $priColor={colours.primary}
       $secColor={colours.secondary}
       $terColor={colours.tertiary}
-      onClick={onToggle}
+      onClick={handleClick}
     >
+      <Ripple key={rippleKey} $color={colours.secondary} />
       {label}
     </Container>
   );
@@ -41,11 +33,13 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color:#373737;
+  color: #373737;
   font-size: 16px;
+  position: relative;
+  overflow: hidden;
   margin: 16px;
   cursor: pointer;
-  transition: all 100ms linear;
+  transition: all 50ms linear;
   background: ${(props) => (props.$active ? `${props.$priColor}` : "#888")};
   background: ${(props) =>
     props.$active
@@ -60,4 +54,22 @@ const Container = styled.div`
       : `inset 0 2px 10px rgba(0, 0, 0, 0.3), 0 6px 0 #8888889a,3px 3px 10px rgba(0, 0, 0, 0.3)`};
 
   transform: ${(props) => (props.$active ? "translateY(2px)" : "")};
+`;
+
+const Ripple = styled.span`
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: ${(p) => p.$color};
+  opacity: 0.6;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: rippleEffect 500ms ease-out forwards;
+
+  @keyframes rippleEffect {
+    to {
+      transform: scale(12);
+      opacity: 0;
+    }
+  }
 `;

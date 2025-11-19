@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { StrudelMirror } from "@strudel/codemirror";
 import { evalScope } from "@strudel/core";
 import { drawPianoroll } from "@strudel/draw";
@@ -22,12 +22,13 @@ import Navbar from "./components/Navbar";
 import PerformanceControls from "./components/PerformanceControls";
 import CustomSlider from "./components/CustomSlider";
 import { useToast } from "./components/ToastContext";
+import Graph from "./components/Graph";
 
 let globalEditor = null;
 
-const handleD3Data = (event) => {
-  console.log(event.detail);
-};
+// const handleD3Data = (event) => {
+//   console.log(event.detail);
+// };
 
 export default function StrudelDemo() {
   const { showToast } = useToast();
@@ -88,16 +89,15 @@ export default function StrudelDemo() {
   };
 
   useEffect(() => {
-    // UI Logic for adding pads.
-    const instruments = extractInstruments(originalNotes);
-    setInstrumentToggles((prev) => {
-      const updated = { ...prev };
-      instruments.forEach((name) => {
-        if (!(name in updated)) updated[name] = true; // default ON
-      });
-      return updated;
-    });
-  }, [originalNotes]);
+  const instruments = extractInstruments(originalNotes);
+  const newToggles = {};
+  instruments.forEach(name => {
+    newToggles[name] = true; 
+  });
+
+  setInstrumentToggles(newToggles); 
+}, [originalNotes]);
+
 
   const handleProc = () => {
     let processedCode = originalNotes;
@@ -139,6 +139,18 @@ export default function StrudelDemo() {
       handlePlay();
     }
   };
+
+   const [ampData, setAmpData] = useState([]);
+
+const handleD3Data = useCallback((event) => {
+  const { time, amplitude } = event.detail;
+  if (typeof amplitude !== "number") return;
+
+  setAmpData(prev => {
+    const next = [...prev, { time, amplitude }];
+    return next.length > 200 ? next.slice(-200) : next;
+  });
+}, []);
 
   useEffect(() => {
     if (!hasRun.current) {
@@ -250,6 +262,8 @@ export default function StrudelDemo() {
     reader.readAsText(file);
   };
 
+ 
+
   return (
     <div>
       <Navbar onExport={handleExport} handleImportPreset={handleImportPreset} />
@@ -268,6 +282,7 @@ export default function StrudelDemo() {
                 <div id="editor" />
                 <div id="output" />
               </div>
+              <Graph data={ampData} />
             </div>
 
             <div className="col-md-4">
