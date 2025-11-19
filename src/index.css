@@ -35,7 +35,6 @@ h6 {
     gap: 10px;
 }
 
-
 .canvas-container {
     display: flex;
     align-items: center;
@@ -66,12 +65,15 @@ h6 {
 .pad-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    justify-items: center;
 }
 
-.accordion-item,.accordion-button {
+.accordion-item,
+.accordion-button {
     background-color: transparent;
     border-color: #714994;
 }
+
 .accordion-button {
     color: white;
 }

@@ -1,8 +1,10 @@
 import { useRef } from "react";
 import styled from "styled-components";
 
-const Navbar = ({ onExport }) => {
+const Navbar = ({ onExport, handleImportPreset }) => {
   const downloadRef = useRef(null);
+  const fileInputRef = useRef(null);
+
   return (
     <NavbarContainer>
       <h2>Strudel Reactor</h2>
@@ -23,10 +25,31 @@ const Navbar = ({ onExport }) => {
               Export Preset JSON
             </button>
           </li>
+          <li>
+            <button
+              className="dropdown-item"
+              onClick={() => fileInputRef.current.click()}
+            >
+              Import Preset
+            </button>
+          </li>
         </ul>
       </div>
-      {/* Hidden link for exporting */}
-      <a ref={downloadRef} style={{ display: "none" }}>download</a>
+      <div className="hidden-buttons" style={{ display: "none" }}>
+        {/* Hidden link for exporting */}
+        <a ref={downloadRef} style={{ display: "none" }}>
+          download
+        </a>
+
+        {/* Hidden file input triggered by nav button */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          accept="application/json"
+          style={{ display: "none" }}
+          onChange={handleImportPreset}
+        />
+      </div>
     </NavbarContainer>
   );
 };

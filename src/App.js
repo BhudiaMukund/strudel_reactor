@@ -208,9 +208,49 @@ export default function StrudelDemo() {
     URL.revokeObjectURL(url);
   };
 
+  const handleImportPreset = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+
+        if (!data.settings || !data.instruments || !data.originalCode) {
+          alert("Invalid preset file format.");
+          return;
+        }
+
+        // Update all sliders.
+        setVolume(data.settings.volume);
+        setCps(data.settings.cps);
+        setReverb(data.settings.reverb);
+        setLpf(data.settings.lpf);
+
+        // Update the instrument pad.
+        setInstrumentToggles(data.instruments);
+
+        // Set the imported code.
+        setOriginalNotes(data.originalCode);
+
+        // Reprocess the code and play.
+        setTimeout(() => handleProcAndPlay(), 50);
+
+        alert("Preset imported successfully!");
+      } catch (err) {
+        console.error("Import error:", err);
+        alert("Failed to load preset: invalid JSON.");
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
   return (
     <div>
-      <Navbar onExport={handleExport} />
+      <Navbar onExport={handleExport} handleImportPreset={handleImportPreset} />
       <main>
         <div className="container-fluid">
           <div className="row">
